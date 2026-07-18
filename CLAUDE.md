@@ -1,12 +1,24 @@
 # SpeedyTools ("Build Faster Mod") — Reference
 
 Forge 1.8 Minecraft mod, cloned from `TheGreyGhost/SpeedyTools` (GitHub). Mod id
-`speedytoolsmod`, display name "Build Faster Mod", version `4.0.0` (see
-`SpeedyToolsMod.java` — note `mcmod.info` still says version `2.1.0` / mcversion
-`1.7.10`, stale leftover metadata predating the 1.8 port; `build.gradle`'s
-`processResources` block expands the real `version`/`mcversion` into it at build
-time, so the packaged jar's `mcmod.info` will be correct even though the source
-file looks wrong).
+`speedytoolsmod`, display name "Build Faster Mod", version `4.1.0` (see
+`SpeedyToolsMod.java`). `mcmod.info`'s `version`/`mcversion` fields use
+`${version}`/`${mcversion}` Gradle template placeholders, expanded by
+`build.gradle`'s `processResources` block (`expand 'version':project.version,
+'mcversion':project.minecraft.version`) into the real values at build time —
+confirmed by inspecting the packaged jar's `mcmod.info` after a build. (Earlier
+revisions of this file had the placeholders replaced with literal stale values
+`2.1.0`/`1.7.10`, which silently broke the expand — Gradle's `expand()` only
+substitutes `${...}` tokens, so a literal string doesn't get touched. If
+`mcmod.info` in a built jar ever shows a stale version again, check that the
+placeholders in `src/main/resources/mcmod.info` weren't reverted.)
+
+To bump the version, use `scripts/bump-version.sh <new-version>` (e.g.
+`scripts/bump-version.sh 4.1.0`) rather than editing files by hand — it updates
+`build.gradle` (`version = "X.Y.Z"`) and `SpeedyToolsMod.java` (both the `@Mod`
+annotation's `version` attribute and the `VERSION` constant) together, and
+deliberately leaves `mcmod.info` alone since its placeholders are
+version-agnostic (see above).
 
 Gives players in-game tools to select/copy/move/delete/fill large voxel regions
 with undo support and a server-side backup system, without needing WorldEdit.
@@ -19,7 +31,7 @@ JDKs). Files: `Dockerfile`, `docker-compose.yml`.
 ```
 docker compose build
 docker compose run --rm dev -lc "./gradlew setupDevWorkspace"   # one-time / after build.gradle changes
-docker compose run --rm dev -lc "./gradlew build"                 # -> build/libs/speedytoolsmod-4.0.0.jar
+docker compose run --rm dev -lc "./gradlew build"                 # -> build/libs/speedytoolsmod-4.1.0.jar
 ```
 
 `docker-compose.yml` mounts the project root at `/workspace` and keeps a named
@@ -91,6 +103,15 @@ Root package `speedytools`. Split into `clientside`, `serverside`, `common`
   `SpeedyToolsNetworkServer`, `PlayerTrackerRegistry`).
 
 ### Items (`common.items`) — the 9 tools, registered in `RegistryForItems`
+
+For precise, source-verified per-tool mechanics (controls, exact selection
+algorithms, what "cancel selection after action" does per tool, etc.), see
+`docs/` — one file per tool, plus `docs/README.md` for the shared
+simple-vs-complex interaction model. Note the Sceptre and Orb are `simple`
+*and* `complex`: they run as instant single-click tools until scrolled into
+infinite placement mode, at which point they switch to the same
+selection-plus-hold-to-confirm model as the three Staff tools (see
+`clientside.tools.SpeedyToolSimpleAndComplex`).
 
 Display names from `assets/speedytoolsmod/lang/en_US.lang`:
 

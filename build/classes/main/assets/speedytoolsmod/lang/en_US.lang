@@ -1,0 +1,13 @@
+tile.selectionfog.name=Selection Fog
+tile.selectionsolidfog.name=Selection Solid Fog
+item.simpleorb.name=Orb of Transmutation
+item.complexorb.name=Orb of Transmutation
+item.simplesceptre.name=Enchanted Sceptre of Contour Extrusion
+item.simplewandweak.name=Wand of Non-destructive Linear Conjuration
+item.simplewandstrong.name=Wand of Destructive Linear Conjuration
+item.complexdelete.name=Staff of Destruction
+item.complexmove.name=Staff of Relocation
+item.complexcopy.name=Staff of Duplication
+item.complexboundary.name=Arcane Claw of Boundary Creation
+item.tester.name=In-game tester
+itemGroup.tabSpeedyTools=Build Faster

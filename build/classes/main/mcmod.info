@@ -1,0 +1,14 @@
+[{
+    "modid": "speedytoolsmod",
+    "name": "Build Faster Mod",
+    "description": "Build Faster!  Place multiple blocks with one click! Copy and paste!  Undo your mistakes!",
+    "version": "4.1.0",
+    "mcversion": "1.8",
+    "url": "https://github.com/TheGreyGhost/SpeedyTools",
+    "updateUrl": "",
+    "authors": [ "TheGreyGhost" ],
+    "credits": "With many thanks to the MCP and Forge authors.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}]

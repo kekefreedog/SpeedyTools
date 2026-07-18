@@ -1,5 +1,4 @@
 # Gradle / Forge build output
-build/
 .gradle/
 out/
 
