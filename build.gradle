@@ -11,41 +11,40 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
 
-apply plugin: 'forge'
+apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "4.1.0"
+version = "4.1.1"
 group= "com.thegreyghost.speedytoolsmod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "speedytoolsmod"
 
 minecraft {
-    version = "1.8-11.14.3.1450" // "1.8-11.14.1.1334"
-    assetDir = "eclipse/assets"
+    version = "1.8.9-11.15.1.2318-1.8.9"
+    // NOTE(forge-1.8.9-migration): FG 1.2's "assetDir" property doesn't exist on FG 2.1's
+    // extension anymore; FG 2.x uses "runDir" (where runClient/runServer execute) instead.
+    runDir = "run"
 
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_nodoc_20141130"
+    // Confirmed via de.oceanlabs.mcp:mcp_stable maven-metadata.xml: version "22-1.8.9" is
+    // the stable MCP mapping build purpose-made for MC 1.8.9 (as opposed to the old
+    // snapshot_nodoc_20141130, which predates 1.8.9 and left WorldRenderer mostly
+    // unmapped - see forge-1.8.9-migration branch history).
+    mappings = "stable_22"
 }
 
-// Mojang retired the old s3.amazonaws.com/Minecraft.Download endpoints that this
-// version of ForgeGradle (1.2) hardcodes. Point the relevant tasks at the current
-// official Mojang piston-meta/launcher.mojang.com endpoints for Minecraft 1.8 instead.
-afterEvaluate {
-    tasks.getByName('downloadClient').url = new net.minecraftforge.gradle.delayed.DelayedString(
-        project, 'https://launcher.mojang.com/v1/objects/d722504db9de2b47f46cc592b8528446272ae648/client.jar')
-    tasks.getByName('downloadServer').url = new net.minecraftforge.gradle.delayed.DelayedString(
-        project, 'https://launcher.mojang.com/v1/objects/a028f00e678ee5c6aef0e29656dca091b5df11c7/server.jar')
-    tasks.getByName('getVersionJson').url = new net.minecraftforge.gradle.delayed.DelayedString(
-        project, 'https://piston-meta.mojang.com/v1/packages/9eb165eef46294062d8698c8a78e8ac914949e7a/1.8.json')
-    tasks.getByName('getAssetsIndex').url = new net.minecraftforge.gradle.delayed.DelayedString(
-        project, 'https://launchermeta.mojang.com/v1/packages/f6ad102bcaa53b1a58358f16e376d548d44933ec/1.8.json')
-}
+// NOTE(forge-1.8.9-migration): FG 1.2 needed an afterEvaluate override here for
+// downloadClient/downloadServer/getVersionJson/getAssetsIndex because it hardcoded
+// dead s3.amazonaws.com/Minecraft.Download URLs, and used a
+// net.minecraftforge.gradle.delayed.DelayedString class that no longer exists under
+// FG 2.1 (package restructured). Removed - see whether FG 2.1 needs an equivalent
+// workaround; if so it must target FG 2.1's actual task/class names, not FG 1.2's.
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.+'
@@ -69,25 +68,36 @@ test {
     exclude '*'
 }
 
+// NOTE: mcmod.info's "mcversion" field is cosmetic only (shown in the Mods list) - it does
+// NOT control FML's actual load-time compatibility gate. That gate is driven entirely by
+// @Mod(acceptedMinecraftVersions=...) in SpeedyToolsMod.java (verified by disassembling
+// Forge's FMLModContainer.bindMetadata: if that annotation attribute is blank, FML falls
+// back to the exact Minecraft version the Forge build itself targets - "1.8" for our pinned
+// 1.8-11.14.3.1450 - producing range [1.8,1.8] regardless of mcmod.info). Keep this in sync
+// with the acceptedMinecraftVersions value in SpeedyToolsMod.java.
+ext.mcversionDeclared = "[1.8,1.8.9]"
+
 processResources
 {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    inputs.property "mcversion", mcversionDeclared
 
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+    // NOTE(forge-1.8.9-migration): previously this used two separate from() blocks (one
+    // include:'mcmod.info' + expand, one exclude:'mcmod.info' for everything else). Under
+    // FG 2.1/Gradle 2.12 the exclude in the 2nd block stopped taking effect, so mcmod.info got
+    // copied twice - once expanded, once raw - which made FG's stricter reobfJar task fail with
+    // "duplicate entry: mcmod.info" (the plain jar task tolerated it silently). filesMatching()
+    // is the more robust, single-from-block way to expand just one file: no duplicate source,
+    // nothing to deduplicate.
+    from(sourceSets.main.resources.srcDirs)
+    filesMatching('mcmod.info') {
+        expand 'version':project.version, 'mcversion':mcversionDeclared
     }
 }
 
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
 sourceSets { main { output.resourcesDir = output.classesDir } }
