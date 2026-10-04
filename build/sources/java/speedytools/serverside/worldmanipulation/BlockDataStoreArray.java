@@ -13,8 +13,8 @@ public class BlockDataStoreArray implements BlockDataStore
     yCount = i_ycount;
     zCount = i_zcount;
     int numberOfBlocks = xCount * yCount * zCount;
-    blockIDbits0to7 = new byte[numberOfBlocks];
-    blockIDbits8to11andmetaData = new byte[numberOfBlocks];
+    blockIDs = new int[numberOfBlocks];
+    metadataValues = new byte[numberOfBlocks];
     lightValues = new byte[numberOfBlocks];
   }
   /**
@@ -31,7 +31,7 @@ public class BlockDataStoreArray implements BlockDataStore
     assert (y >= 0 && y < yCount);
     assert (z >= 0 && z < zCount);
     final int offset = y * xCount * zCount + z * xCount + x;
-    return (blockIDbits0to7[offset] & 0xff) | ((blockIDbits8to11andmetaData[offset] & 0x0f) << 4);
+    return blockIDs[offset];
   }
 
   /**
@@ -48,8 +48,8 @@ public class BlockDataStoreArray implements BlockDataStore
     assert (y >= 0 && y < yCount);
     assert (z >= 0 && z < zCount);
     final int offset = y * xCount * zCount + z * xCount + x;
-    blockIDbits0to7[offset] = (byte) (blockID & 0xff);
-    blockIDbits8to11andmetaData[offset] = (byte) ((blockIDbits8to11andmetaData[offset] & 0xf0) | (blockID >> 8));
+    if (blockID < 0) throw new IllegalArgumentException("Block ID must be non-negative");
+    blockIDs[offset] = blockID;
   }
 
   /**
@@ -66,7 +66,7 @@ public class BlockDataStoreArray implements BlockDataStore
     assert (y >= 0 && y < yCount);
     assert (z >= 0 && z < zCount);
     final int offset = y * xCount * zCount + z * xCount + x;
-    return (blockIDbits8to11andmetaData[offset] & 0xf0) >> 4;
+    return metadataValues[offset] & 0x0f;
   }
 
   /**
@@ -83,7 +83,7 @@ public class BlockDataStoreArray implements BlockDataStore
     assert (y >= 0 && y < yCount);
     assert (z >= 0 && z < zCount);
     final int offset = y * xCount * zCount + z * xCount + x;
-    blockIDbits8to11andmetaData[offset] = (byte) ((blockIDbits8to11andmetaData[offset] & 0x0f) | (metadata << 4));
+    metadataValues[offset] = (byte) (metadata & 0x0f);
   }
 
   /**
@@ -121,8 +121,8 @@ public class BlockDataStoreArray implements BlockDataStore
     lightValues[offset] = lightValue;
   }
 
-  private byte blockIDbits0to7[];
-  private byte blockIDbits8to11andmetaData[];
+  private int blockIDs[];
+  private byte metadataValues[];
   private byte lightValues[];
 
   private int xCount;
