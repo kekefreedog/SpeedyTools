@@ -19,7 +19,7 @@ public class SpeedyToolsOptions
   public static final String PROP_RESET_BACKUP_THROTTLE = "resetBackupThrottleNow";
 
   private static Configuration configuration;
-  private static boolean autoWorldBackupEnabled = true;
+  private static boolean autoWorldBackupEnabled = false;
 
   /**
    * Creates (or loads) the mod's config file. Called once from CommonProxy::preInit with the
@@ -48,9 +48,9 @@ public class SpeedyToolsOptions
   {
     if (configuration == null) return;
 
-    autoWorldBackupEnabled = configuration.getBoolean(PROP_AUTO_BACKUP_ENABLED, CATEGORY_BACKUP, true,
+    autoWorldBackupEnabled = configuration.getBoolean(PROP_AUTO_BACKUP_ENABLED, CATEGORY_BACKUP, false,
             "Automatically back up the world save before a clone tool (copy/move/delete/fill) is used. "
-          + "This is the safety net that protects your world if a tool goes wrong - strongly recommended to leave enabled.");
+          + "Disabled by default. Enable this to protect your world if a tool goes wrong.");
 
     Property resetProperty = configuration.get(CATEGORY_BACKUP, PROP_RESET_BACKUP_THROTTLE, false,
             "Check this box and click Done to force a fresh world backup next time a clone tool is used, "

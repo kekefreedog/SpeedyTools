@@ -129,7 +129,7 @@ public class WorldFragment
     assert (x >= 0 && x < xCount);
     assert (y >= 0 && y < yCount);
     assert (z >= 0 && z < zCount);
-    assert (blockID >= 0 && blockID <= 0xfff);
+    assert (blockID >= 0);
     blockDataStore.setBlockID(x, y, z, blockID);
     voxelsWithStoredData.setVoxel(x, y, z);
   }

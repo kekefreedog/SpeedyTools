@@ -1,7 +1,7 @@
 # SpeedyTools ("Build Faster Mod") — Reference
 
 Forge 1.8 Minecraft mod, cloned from `TheGreyGhost/SpeedyTools` (GitHub). Mod id
-`speedytoolsmod`, display name "Build Faster Mod", version `4.1.0` (see
+`speedytoolsmod`, display name "Build Faster Mod", version `4.2.0` (see
 `SpeedyToolsMod.java`). `mcmod.info`'s `version`/`mcversion` fields use
 `${version}`/`${mcversion}` Gradle template placeholders, expanded by
 `build.gradle`'s `processResources` block (`expand 'version':project.version,
@@ -14,7 +14,7 @@ substitutes `${...}` tokens, so a literal string doesn't get touched. If
 placeholders in `src/main/resources/mcmod.info` weren't reverted.)
 
 To bump the version, use `scripts/bump-version.sh <new-version>` (e.g.
-`scripts/bump-version.sh 4.1.0`) rather than editing files by hand — it updates
+`scripts/bump-version.sh 4.2.0`) rather than editing files by hand — it updates
 `build.gradle` (`version = "X.Y.Z"`) and `SpeedyToolsMod.java` (both the `@Mod`
 annotation's `version` attribute and the `VERSION` constant) together, and
 deliberately leaves `mcmod.info` alone since its placeholders are
@@ -31,7 +31,7 @@ JDKs). Files: `Dockerfile`, `docker-compose.yml`.
 ```
 docker compose build
 docker compose run --rm dev -lc "./gradlew setupDevWorkspace"   # one-time / after build.gradle changes
-docker compose run --rm dev -lc "./gradlew build"                 # -> build/libs/speedytoolsmod-4.1.0.jar
+docker compose run --rm dev -lc "./gradlew build"                 # -> build/libs/speedytoolsmod-4.2.0.jar
 ```
 
 `docker-compose.yml` mounts the project root at `/workspace` and keeps a named
@@ -253,7 +253,8 @@ selection (up to 256³) doesn't fit in one `Packet250CustomPayload`:
   progressed by `SpeedyToolServerActions`/`ServerTickHandler`.
 - `BlockDataStore` (interface) + `BlockDataStoreArray`/`BlockDataStoreSparse` —
   two storage strategies for per-voxel block ID/metadata/light data (dense
-  array vs. sparse map), used depending on selection size/density.
+  array vs. sparse map), used depending on selection size/density. Both preserve
+  non-negative 32-bit block IDs independently of metadata and lighting.
 - `WorldServerReader`/`WorldServerReaderFill` — read-side helpers for
   streaming world data into a `WorldFragment`.
 - `SpeedyToolServerActions` — the actual command handler invoked when packets
@@ -263,6 +264,9 @@ selection (up to 256³) doesn't fit in one `Packet250CustomPayload`:
   registers it with `WorldHistory`).
 
 ### World backup system (`serverside.backup`)
+
+Automatic backups default to disabled (`backup.autoWorldBackupEnabled=false`);
+existing saved preferences are preserved. Enable them in the mod Config screen.
 
 - `MinecraftSaveFolderBackups` — before any clone-tool action, copies the
   entire save folder to a timestamped backup (throttled: no more than once per

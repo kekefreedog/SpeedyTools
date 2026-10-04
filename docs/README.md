@@ -93,6 +93,7 @@ Universal controls while a complex tool is equipped:
     you clicked on (`SpeedyToolComplexOrb.java:82-88`).
   - Sceptre overrides it to follow a contour/surface instead of flooding a solid
     blob (`SpeedyToolComplexSceptre.java`).
-- Every clone-tool action first triggers a full world-save backup (throttled to
-  once per 5 minutes) unless disabled in the mod's Config screen — see the main
+- When enabled in the mod's Config screen, clone-tool actions trigger a full
+  world-save backup (throttled to once per 5 minutes). Automatic backups default
+  to disabled; existing saved preferences are preserved — see the main
   project `CLAUDE.md` and `serverside/backup/MinecraftSaveFolderBackups.java`.

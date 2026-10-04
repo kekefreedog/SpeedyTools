@@ -5,7 +5,7 @@ import java.util.HashMap;
 /**
  * User: The Grey Ghost
  * Date: 20/07/2014
- * Stores the Block Data (ID, metadata, lightvalue) as arrays
+ * Stores block IDs in bits 0-31, metadata in bits 32-35, and light in bits 36-43.
  */
 public class BlockDataStoreSparse implements BlockDataStore
 {
@@ -14,7 +14,7 @@ public class BlockDataStoreSparse implements BlockDataStore
     xCount = i_xcount;
     yCount = i_ycount;
     zCount = i_zcount;
-    sparseData = new HashMap<Integer, Integer>(estimatedElementsUsed);
+    sparseData = new HashMap<Integer, Long>(estimatedElementsUsed);
   }
   /**
    * gets the blockID at a particular location.
@@ -30,8 +30,8 @@ public class BlockDataStoreSparse implements BlockDataStore
     assert (y >= 0 && y < yCount);
     assert (z >= 0 && z < zCount);
     final int offset = y * xCount * zCount + z * xCount + x;
-    Integer data = sparseData.get(offset);
-    return data == null ? 0 : (data & 0xfff);
+    Long data = sparseData.get(offset);
+    return data == null ? 0 : (int) (data & 0xffffffffL);
   }
 
   /**
@@ -48,8 +48,9 @@ public class BlockDataStoreSparse implements BlockDataStore
     assert (y >= 0 && y < yCount);
     assert (z >= 0 && z < zCount);
     final int offset = y * xCount * zCount + z * xCount + x;
-    Integer data = sparseData.get(offset);
-    sparseData.put(offset, (blockID | (data == null ? 0 : (data & ~0xfff))) );
+    Long data = sparseData.get(offset);
+    if (blockID < 0) throw new IllegalArgumentException("Block ID must be non-negative");
+    sparseData.put(offset, (long) blockID | (data == null ? 0L : (data & ~0xffffffffL)));
   }
 
   /**
@@ -66,8 +67,8 @@ public class BlockDataStoreSparse implements BlockDataStore
     assert (y >= 0 && y < yCount);
     assert (z >= 0 && z < zCount);
     final int offset = y * xCount * zCount + z * xCount + x;
-    Integer data = sparseData.get(offset);
-    return data == null ? 0 : ((data >> 12) & 0x0f);
+    Long data = sparseData.get(offset);
+    return data == null ? 0 : (int) ((data >>> 32) & 0x0f);
   }
 
   /**
@@ -84,8 +85,8 @@ public class BlockDataStoreSparse implements BlockDataStore
     assert (y >= 0 && y < yCount);
     assert (z >= 0 && z < zCount);
     final int offset = y * xCount * zCount + z * xCount + x;
-    Integer data = sparseData.get(offset);
-    sparseData.put(offset, (metadata << 12) | (data == null ? 0 : (data & ~0xf000)) );
+    Long data = sparseData.get(offset);
+    sparseData.put(offset, ((long) (metadata & 0x0f) << 32) | (data == null ? 0L : (data & ~(0x0fL << 32))));
   }
 
   /**
@@ -103,8 +104,8 @@ public class BlockDataStoreSparse implements BlockDataStore
     assert (y >= 0 && y < yCount);
     assert (z >= 0 && z < zCount);
     final int offset = y * xCount * zCount + z * xCount + x;
-    Integer data = sparseData.get(offset);
-    return data == null ? 0 : (byte)(data >> 16);
+    Long data = sparseData.get(offset);
+    return data == null ? 0 : (byte)(data >>> 36);
   }
 
   /**
@@ -121,11 +122,11 @@ public class BlockDataStoreSparse implements BlockDataStore
     assert (y >= 0 && y < yCount);
     assert (z >= 0 && z < zCount);
     final int offset = y * xCount * zCount + z * xCount + x;
-    Integer data = sparseData.get(offset);
-    sparseData.put(offset, (lightValue << 16) | (data == null ? 0 : data & ~0xff0000));
+    Long data = sparseData.get(offset);
+    sparseData.put(offset, ((long) (lightValue & 0xff) << 36) | (data == null ? 0L : (data & ~(0xffL << 36))));
   }
 
-  private HashMap<Integer, Integer> sparseData;
+  private HashMap<Integer, Long> sparseData;
 
   private int xCount;
   private int yCount;
