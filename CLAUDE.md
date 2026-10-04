@@ -266,7 +266,8 @@ selection (up to 256³) doesn't fit in one `Packet250CustomPayload`:
 ### World backup system (`serverside.backup`)
 
 Automatic backups default to disabled (`backup.autoWorldBackupEnabled=false`);
-existing saved preferences are preserved. Enable them in the mod Config screen.
+Existing saved preferences are preserved for single-player/integrated servers.
+Dedicated servers always disable automatic backups, even if the config says true.
 
 - `MinecraftSaveFolderBackups` — before any clone-tool action, copies the
   entire save folder to a timestamped backup (throttled: no more than once per

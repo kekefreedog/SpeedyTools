@@ -95,5 +95,6 @@ Universal controls while a complex tool is equipped:
     blob (`SpeedyToolComplexSceptre.java`).
 - When enabled in the mod's Config screen, clone-tool actions trigger a full
   world-save backup (throttled to once per 5 minutes). Automatic backups default
-  to disabled; existing saved preferences are preserved — see the main
+  to disabled on integrated servers, where existing saved preferences are preserved.
+  Dedicated servers always disable these backups regardless of config — see the main
   project `CLAUDE.md` and `serverside/backup/MinecraftSaveFolderBackups.java`.

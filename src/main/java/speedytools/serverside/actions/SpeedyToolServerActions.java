@@ -49,6 +49,8 @@ public class SpeedyToolServerActions
    */
   public ResultWithReason prepareForToolAction(EntityPlayerMP player)
   {
+    if (!SpeedyToolsOptions.getAutoWorldBackupEnabled()) return ResultWithReason.success();
+
     assert (minecraftSaveFolderBackups != null);
     assert (speedyToolsNetworkServer != null);
 

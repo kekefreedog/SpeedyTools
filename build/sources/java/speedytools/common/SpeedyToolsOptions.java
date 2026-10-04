@@ -2,6 +2,7 @@ package speedytools.common;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import speedytools.serverside.actions.SpeedyToolServerActions;
 
 import java.io.File;
@@ -50,7 +51,7 @@ public class SpeedyToolsOptions
 
     autoWorldBackupEnabled = configuration.getBoolean(PROP_AUTO_BACKUP_ENABLED, CATEGORY_BACKUP, false,
             "Automatically back up the world save before a clone tool (copy/move/delete/fill) is used. "
-          + "Disabled by default. Enable this to protect your world if a tool goes wrong.");
+          + "Disabled by default. Available only in single-player/integrated servers; always disabled on dedicated servers.");
 
     Property resetProperty = configuration.get(CATEGORY_BACKUP, PROP_RESET_BACKUP_THROTTLE, false,
             "Check this box and click Done to force a fresh world backup next time a clone tool is used, "
@@ -66,8 +67,10 @@ public class SpeedyToolsOptions
     }
   }
 
-  // if true - automatically back up the world save before a clone tool action is performed
-  public static boolean getAutoWorldBackupEnabled() { return autoWorldBackupEnabled; }
+  // Dedicated servers must never create automatic backups, regardless of the saved preference.
+  public static boolean getAutoWorldBackupEnabled() {
+    return FMLCommonHandler.instance().getSide().isClient() && autoWorldBackupEnabled;
+  }
 
   // speed for double-clicking with the mouse
   public static int getDoubleClickSpeedMS() {
