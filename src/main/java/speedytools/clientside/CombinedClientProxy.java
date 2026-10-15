@@ -49,10 +49,15 @@ public class CombinedClientProxy extends CommonProxy {
   {
     ClientSide.preInitialise();
     super.preInit(event);
+    RegistryForItems.itemStructureTemplate.setCreativeTab(ClientSide.tabSpeedyTools);
+    RegistryForItems.itemStructureCapture.setCreativeTab(ClientSide.tabSpeedyTools);
+    MinecraftForge.EVENT_BUS.register(new speedytools.clientside.templates.TemplateItemModel());
 
     MinecraftForge.EVENT_BUS.register(new SpeedyToolsConfigEventHandler());
 
     RegistryForItems.itemSpeedyBoundary.registerVariants();
+    net.minecraft.client.resources.model.ModelBakery.addVariantName(RegistryForItems.itemStructureCapture,
+        "speedytoolsmod:structurecapture", "speedytoolsmod:structurecapture_icon");
   }
 
   /**
@@ -86,6 +91,7 @@ public class CombinedClientProxy extends CommonProxy {
             ClientSide.speedyToolSounds,
             ClientSide.undoManagerSimple,
             ClientSide.packetSenderClient);
+    speedytools.clientside.templates.TemplateClient.boundary = speedyToolBoundary;
 
     SpeedyToolOrb speedyToolOrb = new SpeedyToolOrb(RegistryForItems.itemSpeedyOrb,
             ClientSide.speedyToolRenderers,
@@ -226,6 +232,10 @@ public class CombinedClientProxy extends CommonProxy {
     FMLCommonHandler.instance().bus().register(new ClientTickHandler());
 
     MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+    speedytools.clientside.templates.TemplateClient.initialise();
+    speedytools.clientside.templates.TemplateClient templates = new speedytools.clientside.templates.TemplateClient();
+    MinecraftForge.EVENT_BUS.register(templates);
+    FMLCommonHandler.instance().bus().register(templates);
 
 
   }
@@ -240,6 +250,21 @@ public class CombinedClientProxy extends CommonProxy {
   @Override
   public Path getOrCreateSaveBackupsFolder() throws IOException {
     return new File(Minecraft.getMinecraft().mcDataDir, "saves").toPath();
+  }
+
+  @Override
+  public void openTemplateLibrary() { speedytools.clientside.templates.TemplateClient.open(); }
+
+  @Override
+  public void templateClick(net.minecraft.util.BlockPos point, net.minecraft.util.EnumFacing side)
+  {
+    speedytools.clientside.templates.TemplateClient.click(point, side);
+  }
+
+  @Override
+  public void templateMessage(net.minecraft.nbt.NBTTagCompound message)
+  {
+    speedytools.clientside.templates.TemplateClient.receive(message);
   }
 
   @Override

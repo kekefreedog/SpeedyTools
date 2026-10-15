@@ -11,3 +11,12 @@ item.complexcopy.name=Staff of Duplication
 item.complexboundary.name=Arcane Claw of Boundary Creation
 item.tester.name=In-game tester
 itemGroup.tabSpeedyTools=Build Faster
+
+item.structuretemplate.name=Structure Template
+key.categories.speedytemplates=SpeedyTools Templates
+key.template.library=Open template library
+key.template.rotate=Rotate template
+key.template.mirror=Mirror template
+key.template.cancel=Cancel template preview
+
+item.structurecapture.name=Structure Capture

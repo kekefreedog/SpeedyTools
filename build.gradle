@@ -1,9 +1,9 @@
 buildscript {
     repositories {
-        mavenCentral()
+        maven { url = "https://repo.maven.apache.org/maven2/" }
         maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url = "https://maven.minecraftforge.net/"
         }
         maven {
             name = "sonatype"
@@ -17,7 +17,10 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "4.2.1"
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+version = "4.6.4"
 group= "com.thegreyghost.speedytoolsmod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "speedytoolsmod"
 
@@ -37,6 +40,18 @@ minecraft {
 // version of ForgeGradle (1.2) hardcodes. Point the relevant tasks at the current
 // official Mojang piston-meta/launcher.mojang.com endpoints for Minecraft 1.8 instead.
 afterEvaluate {
+    // Gradle 2 / ForgeGradle 1.2 add HTTP repositories internally. Modern hosts
+    // reject HTTP or redirect it with status codes this Gradle cannot follow.
+    repositories.withType(org.gradle.api.artifacts.repositories.MavenArtifactRepository).all { repository ->
+        String address = repository.url.toString()
+        if (address.contains('repo1.maven.org/maven2')) {
+            repository.url = 'https://repo.maven.apache.org/maven2/'
+        } else if (address.contains('files.minecraftforge.net/maven')) {
+            repository.url = 'https://maven.minecraftforge.net/'
+        } else if (address.startsWith('http://')) {
+            repository.url = 'https://' + address.substring('http://'.length())
+        }
+    }
     tasks.getByName('downloadClient').url = new net.minecraftforge.gradle.delayed.DelayedString(
         project, 'https://launcher.mojang.com/v1/objects/d722504db9de2b47f46cc592b8528446272ae648/client.jar')
     tasks.getByName('downloadServer').url = new net.minecraftforge.gradle.delayed.DelayedString(
@@ -67,6 +82,16 @@ dependencies {
 
 test {
     exclude '*'
+}
+
+// Run the template regression suite explicitly; preserve the legacy test task's exclusions.
+task templateTest(type: Test, dependsOn: testClasses) {
+    testClassesDir = sourceSets.test.output.classesDir
+    classpath = sourceSets.test.runtimeClasspath
+    include 'speedytools/templates/*Test.class'
+    enableAssertions = true
+    workingDir = file("$buildDir/template-test")
+    doFirst { workingDir.mkdirs() }
 }
 
 processResources

@@ -74,6 +74,7 @@ public class ServerSide
     ++globalTickCount;
 
     getSpeedyToolServerActions().tick();
+    speedytools.serverside.templates.TemplateServer.tick();
     getSpeedyToolsNetworkServer().tick();
     long maxTimeForSelectionGeneration = SpeedyToolsOptions.getMaxServerSelGenTimeMS();
     if (getSpeedyToolServerActions().isAsynchronousActionInProgress()) {  // no selection generation if asynch task underway
@@ -99,6 +100,8 @@ public class ServerSide
   public static SpeedyToolServerActions getSpeedyToolServerActions() {
     return speedyToolServerActions;
   }
+
+  public static WorldHistory getWorldHistory() { return worldHistory; }
 //  public static SpeedyToolWorldManipulator getSpeedyToolWorldManipulator() {
 //    return speedyToolWorldManipulator;
 //  }

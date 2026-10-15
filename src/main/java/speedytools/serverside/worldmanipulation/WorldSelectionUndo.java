@@ -51,6 +51,11 @@ import java.util.List;
 */
 public class WorldSelectionUndo
 {
+  /** Snapshot of affected cells for permission checks before starting an undo. */
+  public VoxelSelectionWithOrigin getUndoRegion()
+  {
+    return changedBlocksMask == null ? null : new VoxelSelectionWithOrigin(wxOfOrigin, wyOfOrigin, wzOfOrigin, changedBlocksMask);
+  }
   public WorldSelectionUndo()
   {
   }

@@ -1,6 +1,8 @@
 package speedytools.common.utilities;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockRailBase;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
@@ -27,12 +29,13 @@ public final class BlockRotateFlipHelper
 
   /**
    * Rotate a block by 90 degrees clockwise(north->east->south->west->north);
-   * Works by manipulating the block's FACING property.  Blocks without FACING are unaffected.
+   * Transforms rail SHAPE or a block's FACING property; other blocks are unaffected.
    * @param iBlockState the starting blockstate
    * @return the rotated blockstate
    */
   public static IBlockState rotate90(IBlockState iBlockState)
   {
+    if (iBlockState.getBlock() instanceof BlockRailBase) return transformRail(iBlockState, RAIL_CLOCKWISE);
     PropertyDirection propertyDirection = getPropertyDirection(iBlockState);
     if (propertyDirection == null) return iBlockState; // block doesn't have this property
 
@@ -47,7 +50,7 @@ public final class BlockRotateFlipHelper
 
   /**
    * Rotate a block by 90 degrees clockwise(north->east->south->west->north);
-   * Works by manipulating the block's FACING property.  Blocks without FACING are unaffected.
+   * Transforms rail SHAPE or a block's FACING property; other blocks are unaffected.
    * @param blockID the internal ID for this block
    * @param metadata the metadata value for this block
    * @return the rotated metadata value
@@ -111,6 +114,8 @@ public final class BlockRotateFlipHelper
    */
   public static IBlockState flip(IBlockState iBlockState, FlipDirection flipDirection)
   {
+    if (iBlockState.getBlock() instanceof BlockRailBase) return transformRail(iBlockState,
+        flipDirection == FlipDirection.WEST_EAST ? RAIL_MIRROR_X : RAIL_MIRROR_Z);
     PropertyDirection propertyDirection = getPropertyDirection(iBlockState);
     if (propertyDirection == null) return iBlockState; // block doesn't have this property
 
@@ -122,6 +127,23 @@ public final class BlockRotateFlipHelper
     } else {
       return iBlockState;
     }
+  }
+
+  // EnumRailDirection metadata order: NS, EW, ascending E/W/N/S, curves SE/SW/NW/NE.
+  // WorldFragment mirrors X first, then rotates clockwise, exactly like its voxel coordinates.
+  private static final int[] RAIL_CLOCKWISE = {1, 0, 5, 4, 2, 3, 7, 8, 9, 6};
+  private static final int[] RAIL_MIRROR_X = {0, 1, 3, 2, 4, 5, 7, 6, 9, 8};
+  private static final int[] RAIL_MIRROR_Z = {0, 1, 2, 3, 5, 4, 9, 8, 7, 6};
+
+  private static IBlockState transformRail(IBlockState state, int[] mapping)
+  {
+    IProperty shape = ((BlockRailBase)state.getBlock()).getShapeProperty();
+    Object value = state.getValue(shape);
+    // Custom rails may define a different shape enum; do not reinterpret their metadata.
+    if (!(value instanceof BlockRailBase.EnumRailDirection)) return state;
+    BlockRailBase.EnumRailDirection direction = (BlockRailBase.EnumRailDirection)value;
+    // Only SHAPE changes: powered/detector/activator flags remain intact.
+    return state.withProperty(shape, BlockRailBase.EnumRailDirection.byMetadata(mapping[direction.getMetadata()]));
   }
 
   // retrieves the PropertyDirection for the given block, or null if it doesn't have one.
@@ -143,12 +165,12 @@ public final class BlockRotateFlipHelper
     return propertyDirection;
   }
 
-  // caches whether this blockID has a property direction or not
+  // Caches support for a direction property or rail shape.
   private static boolean setPropertyDirectionCache(int blockID, int metadata)
   {
     Block block = Block.getBlockById(blockID);
     IBlockState iBlockState = block.getStateFromMeta(metadata);
-    boolean hasPropertyDirection = false;
+    boolean hasPropertyDirection = block instanceof BlockRailBase;
     for (Object property : iBlockState.getProperties().keySet()) {
       if (property instanceof PropertyDirection) {
         hasPropertyDirection = true;

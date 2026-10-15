@@ -49,6 +49,13 @@ public class SpeedyToolServerActions
    */
   public ResultWithReason prepareForToolAction(EntityPlayerMP player)
   {
+    if (speedytools.serverside.templates.TemplateServer.isBusy()) return ResultWithReason.failure("A template operation is in progress.");
+    return prepareForTemplateAction(player);
+  }
+
+  /** The template scheduler owns the world-operation lock when requesting its backup. */
+  public ResultWithReason prepareForTemplateAction(EntityPlayerMP player)
+  {
     if (!SpeedyToolsOptions.getAutoWorldBackupEnabled()) return ResultWithReason.success();
 
     assert (minecraftSaveFolderBackups != null);
@@ -76,6 +83,7 @@ public class SpeedyToolServerActions
    */
   public void performSimpleAction(EntityPlayerMP entityPlayerMP, int buttonClicked, BlockWithMetadata blockToPlace, EnumFacing sideToPlace, List<BlockPos> blockSelection)
   {
+    if (speedytools.serverside.templates.TemplateServer.isBusy()) return;
     WorldServer worldServer = entityPlayerMP.getServerForPlayer();
     switch (buttonClicked) {
       case 0: {
@@ -108,6 +116,7 @@ public class SpeedyToolServerActions
                                                int wxpos, int wypos, int wzpos, QuadOrientation quadOrientation,
                                                BlockPos initialSelectionOrigin)
   {
+    if (speedytools.serverside.templates.TemplateServer.isBusy()) return ResultWithReason.failure("A template operation is in progress.");
     assert (!isAsynchronousActionInProgress());
 //    System.out.println("Server: Tool Action received sequence #" + sequenceNumber + ": tool " + toolID + " at [" + wxpos + ", " + wypos + ", " + wzpos
 //                       + "], rotated:" + quadOrientation.getClockwiseRotationCount() + ", flippedX:" + quadOrientation.isFlippedX());
@@ -207,6 +216,7 @@ public class SpeedyToolServerActions
 
   public ResultWithReason performUndoOfCurrentComplexAction(EntityPlayerMP player, int undoSequenceNumber, int actionSequenceNumber)
   {
+    if (speedytools.serverside.templates.TemplateServer.isBusy()) return ResultWithReason.failure("A template operation is in progress.");
 //    System.out.println("Server: Tool Undo Current Action received: action sequenceNumber " + actionSequenceNumber + ", undo seq number " + undoSequenceNumber);
     if (ServerSide.getInGameStatusSimulator().isTestModeActivated()) {    // testing only
       ResultWithReason resultWithReason = null;
@@ -228,6 +238,7 @@ public class SpeedyToolServerActions
 
   public ResultWithReason performUndoOfLastComplexAction(EntityPlayerMP player, int undoSequenceNumber)
   {
+    if (speedytools.serverside.templates.TemplateServer.isBusy()) return ResultWithReason.failure("A template operation is in progress.");
 //    System.out.println("Server: Tool Undo Last Completed Action received, undo seq number " + undoSequenceNumber);
 
     if (ServerSide.getInGameStatusSimulator().isTestModeActivated()) {    // testing only
@@ -319,6 +330,7 @@ public class SpeedyToolServerActions
   // return true if an asynchronous action is in progress - backup, complex placement, complex undo
   public boolean isAsynchronousActionInProgress()
   {
+    if (speedytools.serverside.templates.TemplateServer.isBusy()) return true;
     if (asynchronousTaskInProgress != null && !asynchronousTaskInProgress.isTaskComplete()) return true;
     return false;
   }

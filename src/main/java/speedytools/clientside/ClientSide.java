@@ -32,6 +32,11 @@ public class ClientSide
       }
       @Override
       public Item getTabIconItem() {return RegistryForItems.itemSpeedySceptre;}
+      @Override
+      public void displayAllReleventItems(java.util.List items) {
+        super.displayAllReleventItems(items);
+        speedytools.clientside.templates.TemplateCatalogue.append(items);
+      }
     };
     activeTool = new ActiveTool();
   }

@@ -1,10 +1,10 @@
 # SpeedyTools ("Build Faster Mod") — Tool Reference
 
-This folder documents how each of the 9 tools added by this mod actually behaves,
+This folder documents the original SpeedyTools items and the template library,
 verified against the current source (not just the in-game tooltips, which in a
 couple of places are stale — noted inline where that's the case).
 
-All 9 items live in their own creative tab ("Build Faster") and have no crafting
+The original items live in their own creative tab ("Build Faster") and have no crafting
 recipe — there is no survival-mode way to obtain them other than creative
 inventory / `/give`. See `common/items/RegistryForItems.java`.
 
@@ -12,6 +12,7 @@ inventory / `/give`. See `common/items/RegistryForItems.java`.
 
 | Doc | In-game name | Class(es) |
 | --- | --- | --- |
+| [structure-templates.md](structure-templates.md) | Structure Template (vanilla Tools tab) | `ItemStructureTemplate` / `TemplateClient` / `TemplateServer` |
 | [wand-of-destructive-linear-conjuration.md](wand-of-destructive-linear-conjuration.md) | Wand of Destructive Linear Conjuration | `ItemSpeedyWandStrong` / `SpeedyToolWandStrong` |
 | [wand-of-non-destructive-linear-conjuration.md](wand-of-non-destructive-linear-conjuration.md) | Wand of Non-destructive Linear Conjuration | `ItemSpeedyWandWeak` / `SpeedyToolWandWeak` |
 | [orb-of-transmutation.md](orb-of-transmutation.md) | Orb of Transmutation | `ItemSpeedyOrb` / `SpeedyToolOrb` + `SpeedyToolComplexOrb` |

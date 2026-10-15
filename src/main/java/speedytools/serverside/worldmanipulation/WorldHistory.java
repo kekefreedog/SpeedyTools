@@ -159,6 +159,12 @@ public class WorldHistory
     return undoLayerFound.transactionID;
   }
 
+  public VoxelSelectionWithOrigin getRegionForNextComplexUndo(EntityPlayerMP player, WorldServer worldServer)
+  {
+    UndoLayerInfo layer = getMostRecentUndo(undoLayersComplex, player, worldServer);
+    return layer == null ? null : layer.worldSelectionUndo.getUndoRegion();
+  }
+
   /** perform simple undo action for the given player - finds the most recent simple action that they did in the given WorldServer
    * @param player
    * @param worldServer

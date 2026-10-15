@@ -27,6 +27,8 @@ public abstract class CommonProxy {
     SpeedyToolsOptions.initialiseConfiguration(event.getSuggestedConfigurationFile());
     RegistryForItems.initialise();
     RegistryForBlocks.initialise();
+    speedytools.serverside.templates.TemplateServer.configure(event.getModConfigurationDirectory());
+    speedytools.common.templates.TemplateNetwork.initialise();
   }
 
   /**
@@ -68,6 +70,11 @@ public abstract class CommonProxy {
    * @return true for success, false for failure
    */
   public abstract boolean enqueueMessageOnCorrectThread(MessageContext ctx, Runnable messageProcessor);
+
+  // Client hooks deliberately keep client classes out of dedicated-server loading.
+  public void openTemplateLibrary() {}
+  public void templateClick(net.minecraft.util.BlockPos point, net.minecraft.util.EnumFacing side) {}
+  public void templateMessage(net.minecraft.nbt.NBTTagCompound message) {}
 
 //  /**
 //   * Gets the NetworkTrafficMonitor used to monitor network traffic on the current side

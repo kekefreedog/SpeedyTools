@@ -8,10 +8,10 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import speedytools.common.CommonProxy;
 
 
-@Mod(modid="speedytoolsmod", name="Build Faster Mod", version="4.2.1", guiFactory="speedytools.clientside.gui.SpeedyToolsGuiFactory")
+@Mod(modid="speedytoolsmod", name="Build Faster Mod", version="4.6.4", acceptableRemoteVersions="[" + SpeedyToolsMod.VERSION + "]", guiFactory="speedytools.clientside.gui.SpeedyToolsGuiFactory")
 public class SpeedyToolsMod {
   public static final String ID = "speedytoolsmod";
-  public static final String VERSION = "4.2.1";
+  public static final String VERSION = "4.6.4";
 
   // The instance of your mod that Forge uses.
   @Mod.Instance("speedytoolsmod")
@@ -34,6 +34,21 @@ public class SpeedyToolsMod {
   @Mod.EventHandler
   public void postInit(FMLPostInitializationEvent event) {
     proxy.postInit();
+  }
+
+  @Mod.EventHandler
+  public void serverStarting(net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent event) {
+    speedytools.serverside.templates.TemplateServer.reset();
+  }
+
+  @Mod.EventHandler
+  public void serverStopping(net.minecraftforge.fml.common.event.FMLServerStoppingEvent event) {
+    speedytools.serverside.templates.TemplateServer.stopping();
+  }
+
+  @Mod.EventHandler
+  public void serverStopped(net.minecraftforge.fml.common.event.FMLServerStoppedEvent event) {
+    speedytools.serverside.templates.TemplateServer.reset();
   }
 
   /**
