@@ -20,3 +20,5 @@ key.template.mirror=Mirror template
 key.template.cancel=Cancel template preview
 
 item.structurecapture.name=Structure Capture
+
+item.blockpipette.name=Block Pipette

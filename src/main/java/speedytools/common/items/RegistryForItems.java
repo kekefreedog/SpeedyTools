@@ -21,6 +21,7 @@ public class RegistryForItems
   public static ItemSpeedyTester itemSpeedyTester;
   public static ItemStructureTemplate itemStructureTemplate;
   public static ItemStructureCapture itemStructureCapture;
+  public static ItemBlockPipette itemBlockPipette;
 
   public static void initialise()
   {
@@ -34,6 +35,8 @@ public class RegistryForItems
     itemComplexDelete = new ItemComplexDelete();
     itemStructureTemplate = new ItemStructureTemplate();
     itemStructureCapture = new ItemStructureCapture();
+    itemBlockPipette = new ItemBlockPipette();
+    GameRegistry.registerItem(itemBlockPipette, ItemBlockPipette.NAME);
     GameRegistry.registerItem(itemStructureCapture, ItemStructureCapture.NAME);
     GameRegistry.registerItem(itemStructureTemplate, ItemStructureTemplate.NAME);
 
@@ -56,6 +59,7 @@ public class RegistryForItems
   public static String [] getAllItemNames()
   {
     String[] baseItems = {
+            ItemBlockPipette.NAME,
             ItemStructureTemplate.NAME,
             ItemStructureCapture.NAME,
             itemSpeedyWandStrong.NAME,
@@ -72,6 +76,7 @@ public class RegistryForItems
 
     // kludge because I can't remember how to initialise ArrayList from String[] and my internet is down...
     String[] debugItems = {
+            ItemBlockPipette.NAME,
             ItemStructureTemplate.NAME,
             ItemStructureCapture.NAME,
             itemSpeedyWandStrong.NAME,

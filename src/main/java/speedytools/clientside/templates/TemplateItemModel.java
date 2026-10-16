@@ -31,6 +31,13 @@ public class TemplateItemModel implements ISmartItemModel
     IBakedModel wand = (IBakedModel)event.modelRegistry.getObject(wandKey);
     IBakedModel icon = (IBakedModel)event.modelRegistry.getObject(iconKey);
     if (wand != null && icon != null) event.modelRegistry.putObject(wandKey, new CaptureWandModel(wand, icon));
+    ModelResourceLocation pipetteKey = new ModelResourceLocation("speedytoolsmod:blockpipette", "inventory");
+    ModelResourceLocation pipetteIconKey = new ModelResourceLocation("speedytoolsmod:blockpipette_icon", "inventory");
+    IBakedModel pipette = (IBakedModel)event.modelRegistry.getObject(pipetteKey);
+    IBakedModel pipetteIcon = (IBakedModel)event.modelRegistry.getObject(pipetteIconKey);
+    if (pipette != null && pipetteIcon != null) {
+      event.modelRegistry.putObject(pipetteKey, new CaptureWandModel(pipette, pipetteIcon));
+    }
     ModelResourceLocation key = new ModelResourceLocation("speedytoolsmod:structuretemplate", "inventory");
     IBakedModel base = (IBakedModel)event.modelRegistry.getObject(key);
     if (base != null) {

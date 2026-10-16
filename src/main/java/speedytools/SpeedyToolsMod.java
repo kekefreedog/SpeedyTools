@@ -8,10 +8,10 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import speedytools.common.CommonProxy;
 
 
-@Mod(modid="speedytoolsmod", name="Build Faster Mod", version="4.6.4", acceptableRemoteVersions="[" + SpeedyToolsMod.VERSION + "]", guiFactory="speedytools.clientside.gui.SpeedyToolsGuiFactory")
+@Mod(modid="speedytoolsmod", name="Build Faster Mod", version="4.6.5", acceptableRemoteVersions="[" + SpeedyToolsMod.VERSION + "]", guiFactory="speedytools.clientside.gui.SpeedyToolsGuiFactory")
 public class SpeedyToolsMod {
   public static final String ID = "speedytoolsmod";
-  public static final String VERSION = "4.6.4";
+  public static final String VERSION = "4.6.5";
 
   // The instance of your mod that Forge uses.
   @Mod.Instance("speedytoolsmod")

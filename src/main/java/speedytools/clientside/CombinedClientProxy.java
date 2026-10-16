@@ -51,6 +51,7 @@ public class CombinedClientProxy extends CommonProxy {
     super.preInit(event);
     RegistryForItems.itemStructureTemplate.setCreativeTab(ClientSide.tabSpeedyTools);
     RegistryForItems.itemStructureCapture.setCreativeTab(ClientSide.tabSpeedyTools);
+    RegistryForItems.itemBlockPipette.setCreativeTab(ClientSide.tabSpeedyTools);
     MinecraftForge.EVENT_BUS.register(new speedytools.clientside.templates.TemplateItemModel());
 
     MinecraftForge.EVENT_BUS.register(new SpeedyToolsConfigEventHandler());
@@ -58,6 +59,8 @@ public class CombinedClientProxy extends CommonProxy {
     RegistryForItems.itemSpeedyBoundary.registerVariants();
     net.minecraft.client.resources.model.ModelBakery.addVariantName(RegistryForItems.itemStructureCapture,
         "speedytoolsmod:structurecapture", "speedytoolsmod:structurecapture_icon");
+    net.minecraft.client.resources.model.ModelBakery.addVariantName(RegistryForItems.itemBlockPipette,
+        "speedytoolsmod:blockpipette", "speedytoolsmod:blockpipette_icon");
   }
 
   /**

@@ -3,6 +3,17 @@ SpeedyTools
 
 A set of custom items for Minecraft(Forge) to help you build faster.
 
+Block Pipette
+-------------
+
+Find the Block Pipette in the Build Faster creative tab, or use
+`/give @p speedytoolsmod:blockpipette`. Right-click a block to replace the wand
+in the selected hotbar slot with one copy of its pick-block item, including its
+colour/material variant. The world block is untouched. The wand is consumed in
+both Creative and Survival; blocks without a pick-block item leave it unchanged.
+Containers are sampled before opening and their contents are not copied.
+The solid 3D eyedropper uses the capture wand's black, lime and cyan palette.
+
 Structure templates (4.6.4)
 -------------------------
 
